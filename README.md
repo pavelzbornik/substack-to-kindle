@@ -1,5 +1,5 @@
 # substack-to-kindle
-A Google Apps Script project that allows you to convert Gmail messages to EPUB files and store them in Google Drive. This is particularly useful for archiving emails in EPUB format, which can be read on various e-book readers.
+A Google Apps Script project that allows you to convert Gmail messages to EPUB files.
 
 
 ## Features
