@@ -57,14 +57,9 @@ function processImageUrls(body, imageUrls, imageBlobs, contentImages) {
         // Replace URL with image name in the HTML body
         body = body.replace(url, formattedUrl);
         
-        // Download image and store it as a blob
-        // var imageBlob = downloadImageBlob(url, imageName);
-        
         // Create image text for EPUB content
         var imageText = '<item href="' + formattedUrl + '" id="' + imageName + '" media-type="image/' + imageName.split('.').pop() + '"/>';
         
-        // Add the image blob and image text to respective lists
-        // imageBlobs.push(imageBlob);
         contentImages.push(imageText);
     });
 
