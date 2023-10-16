@@ -15,5 +15,3 @@ function markMessageAsRead(message) {
     console.error('Error marking message as read:', error);
   }
 }
-
-

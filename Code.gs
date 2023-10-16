@@ -16,13 +16,15 @@ function processUnreadMessages(labelName, recipientEmail) {
               var body = message.getBody(); // Get the body of the email as HTML
               var author = message.getFrom().substring(0,message.getFrom().lastIndexOf('<') - 1)
 
-              var subjectClean = subject.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
+              // var subjectClean = subject.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
+              var subjectClean = Utilities.newBlob(subject).getDataAsString();
               
               var imageUrls = extractImagesFromMessageBody(body);
               var imageBlobs = downloadImages(imageUrls);
 
-              var contentImages = [];
-              body = processImageUrls(body, imageUrls, imageBlobs, contentImages)
+              imageProcessResult=processImageUrls(body, imageUrls)
+              body=imageProcessResult.body
+              var contentImages = imageProcessResult.contentImages
               epub = createEPUB(messageId,author,subject,subjectClean,body,contentImages,imageBlobs)
 
               var subjectWithEmail = 'EPUB file: ' + subjectClean;
