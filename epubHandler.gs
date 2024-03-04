@@ -24,13 +24,15 @@ function createEPUB(messageId,author,subject,subjectClean,body,contentImages,ima
       '    <dc:language>en</dc:language>' +
       '    <dc:title>'+subject+'</dc:title>' +
       '    <dc:creator>'+author+'</dc:creator>' +
+      '    <meta name="cover" content="images/0.jpeg"/>'+
       '  </metadata>' +
       '  <manifest>' +
+      '    <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml"/>' +
       '    <item id="text" href="text.xhtml" media-type="application/xhtml+xml"/>' +
-      '    <item id="toc" href="../OEBPS/toc.ncx" media-type="application/x-dtbncx+xml"/>' 
       +imageHTML+
       '  </manifest>' +
       '  <spine toc="toc">' +
+      '    <itemref idref="toc"/>' +
       '    <itemref idref="text"/>' +
       '  </spine>' +
       '</package>';
@@ -51,15 +53,15 @@ function createEPUB(messageId,author,subject,subjectClean,body,contentImages,ima
       '  <navMap>' +
       '    <navPoint id="navpoint-1" playOrder="1">' +
       '      <navLabel>' +
-      '        <text>Chapter 1</text>' +
+      '        <text>'+subject+'</text>' +
       '      </navLabel>' +
-      '      <content src="text.xhtml#xpointer(/html/body/title[1])"/>' +
+      '      <content src="text.xhtml"/>' +
       '    </navPoint>' +
       '  </navMap>' +
       '</ncx>';
   var tocBlob = Utilities.newBlob(toc,'application/xhtml+xml','OEBPS/toc.ncx');  
 
-  // Import the required library
+
   var bodyExtract = extractContentWithClass(body, 'body')
 
   // Add the text of the book to the ZIP file
@@ -74,12 +76,28 @@ function createEPUB(messageId,author,subject,subjectClean,body,contentImages,ima
 }
 
 
+// function extractContentWithClass(htmlBody, className) {
+//   var $ = Cheerio.load(htmlBody);
+
+//   var header = $('head').html();
+//   // Extract content of div with the specified class
+//   var content = '<body>'+$('div.' + className).html()+'</body>';
+//   var html = '<html>' + header + content + '</html>'
+//   return html;
+// }
+
 function extractContentWithClass(htmlBody, className) {
   var $ = Cheerio.load(htmlBody);
 
   var header = $('head').html();
-  // Extract content of div with the specified class
-  var content = '<body>'+$('div.' + className).html()+'</body>';
-  var html = '<html>' + header + content + '</html>'
+  var content = '<body>';
+  
+  // Loop through all elements with the specified class and extract their HTML content
+  $('div.' + className).each(function(index, element) {
+    content += $(element).html();
+  });
+  
+  content += '</body>';
+  var html = '<html>' + header + content + '</html>';
   return html;
 }

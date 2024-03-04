@@ -15,8 +15,17 @@ function downloadImages(imageUrls) {
       var imageBlob = response.getBlob();
     }  
     
-    imageBlob=Utilities.newBlob(imageBlob.getBytes(), imageBlob.getContentType(), 'OEBPS/images/'+imageName);
-    imageBlobs.push(imageBlob);
+    // imageBlob=Utilities.newBlob(imageBlob.getBytes(), imageBlob.getContentType(), 'OEBPS/images/'+imageName);
+    // imageBlobs.push(imageBlob);
+
+    // Check if imageBlob is null
+    if (imageBlob !== null) {
+      imageBlob = Utilities.newBlob(imageBlob.getBytes(), imageBlob.getContentType(), 'OEBPS/images/' + imageName);
+      imageBlobs.push(imageBlob);
+    } else {
+      console.error("Image conversion failed for URL:", url);
+      // Handle the failure here, like skipping the image or logging the error
+    }
   };
 
   // Now imageBlobs contains all downloaded image blobs
@@ -81,30 +90,62 @@ function processImageUrls(body, imageUrls) {
     return { body: body, contentImages: contentImages }
 }
 
+// function convertPNGtoJPEGAndExport(pngBlob) {
+//   // Create a new presentation
+//   var presentation = SlidesApp.create('Temporary Presentation');
+
+//   // Get the first slide in the presentation
+//   var slide = presentation.getSlides()[0];
+
+//   // Add the PNG image blob to the slide
+//   var image = slide.insertImage(pngBlob);
+
+//   // Get the image blob from the slide
+//   var imageBlob = image.getBlob();
+
+//   // Convert the image to JPEG within the slide
+//   image.replace(imageBlob.getAs(MimeType.JPEG));
+
+//   // // Export the slide as a JPEG image blob
+//   // var exportOptions = SlidesApp.SaveImageOptions.jpeg();
+//   // var exportedBlob = slide.getBlob(exportOptions);
+
+//   // Delete the temporary presentation
+//   DriveApp.getFileById(presentation.getId()).setTrashed(true);
+
+//   // Return the exported JPEG image blob
+//   return image.getBlob();
+// }
 function convertPNGtoJPEGAndExport(pngBlob) {
-  // Create a new presentation
-  var presentation = SlidesApp.create('Temporary Presentation');
+  try {
+    // Create a new presentation
+    var presentation = SlidesApp.create('Temporary Presentation');
 
-  // Get the first slide in the presentation
-  var slide = presentation.getSlides()[0];
+    // Get the first slide in the presentation
+    var slide = presentation.getSlides()[0];
 
-  // Add the PNG image blob to the slide
-  var image = slide.insertImage(pngBlob);
+    // Add the PNG image blob to the slide
+    var image = slide.insertImage(pngBlob);
 
-  // Get the image blob from the slide
-  var imageBlob = image.getBlob();
+    // Get the image blob from the slide
+    var imageBlob = image.getBlob();
 
-  // Convert the image to JPEG within the slide
-  image.replace(imageBlob.getAs(MimeType.JPEG));
+    // Convert the image to JPEG within the slide
+    image.replace(imageBlob.getAs(MimeType.JPEG));
 
-  // // Export the slide as a JPEG image blob
-  // var exportOptions = SlidesApp.SaveImageOptions.jpeg();
-  // var exportedBlob = slide.getBlob(exportOptions);
+    // Export the slide as a JPEG image blob
+    // var exportOptions = SlidesApp.SaveImageOptions.jpeg();
+    // var exportedBlob = slide.getBlob(exportOptions);
 
-  // Delete the temporary presentation
-  DriveApp.getFileById(presentation.getId()).setTrashed(true);
+    // Delete the temporary presentation
+    DriveApp.getFileById(presentation.getId()).setTrashed(true);
 
-  // Return the exported JPEG image blob
-  return image.getBlob();
+    // Return the exported JPEG image blob
+    return image.getBlob();
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.error("An error occurred:", error);
+    return null; // Or you can throw the error again if needed
+  }
 }
 
