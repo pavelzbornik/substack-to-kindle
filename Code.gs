@@ -17,28 +17,34 @@ function processUnreadMessages(labelName, recipientEmail) {
               var body = message.getBody(); // Get the body of the email as HTML
               var author = message.getFrom().substring(0,message.getFrom().lastIndexOf('<') - 1)
 
+              // check if message not Preview
+
+              var isPreview = checkIfPreview(body);
               
+              if (!isPreview){
 
-              // var subjectClean = subject.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
-              var subjectClean = Utilities.newBlob(subject).getDataAsString();
+                // var subjectClean = subject.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
+                var subjectClean = Utilities.newBlob(subject).getDataAsString();
 
-              saveEmailBodyAsHTML(body, subjectClean, folderId);
-              
-              var imageUrls = extractImagesFromMessageBody(body);
-              var imageBlobs = downloadImages(imageUrls);
+                // saveEmailBodyAsHTML(body, subjectClean, folderId);
+                
+                var imageUrls = extractImagesFromMessageBody(body);
+                var imageBlobs = downloadImages(imageUrls);
 
-              imageProcessResult=processImageUrls(body, imageUrls)
-              body=imageProcessResult.body
-              var contentImages = imageProcessResult.contentImages
-              epub = createEPUB(messageId,author,subject,subjectClean,body,contentImages,imageBlobs)
+                imageProcessResult=processImageUrls(body, imageUrls)
+                body=imageProcessResult.body
+                var contentImages = imageProcessResult.contentImages
+                epub = createEPUB(messageId,author,subject,subjectClean,body,contentImages,imageBlobs)
 
-              saveEPUBToDrive(epub, folderId, subjectClean)
+                saveEPUBToDrive(epub, folderId, subjectClean)
 
-              var subjectWithEmail = 'EPUB file: ' + subjectClean;
-              var bodyWithEmail = 'Please find the EPUB file attached.';
-              sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
+                var subjectWithEmail = 'EPUB file: ' + subjectClean;
+                var bodyWithEmail = 'Please find the EPUB file attached.';
+                sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
 
-              markMessageAsRead(currentMessage);
+                
+              }
+            markMessageAsRead(currentMessage);
             }
 
         }

@@ -86,18 +86,4 @@ function createEPUB(messageId,author,subject,subjectClean,body,contentImages,ima
 //   return html;
 // }
 
-function extractContentWithClass(htmlBody, className) {
-  var $ = Cheerio.load(htmlBody);
 
-  var header = $('head').html();
-  var content = '<body>';
-  
-  // Loop through all elements with the specified class and extract their HTML content
-  $('div.' + className).each(function(index, element) {
-    content += $(element).html();
-  });
-  
-  content += '</body>';
-  var html = '<html>' + header + content + '</html>';
-  return html;
-}
