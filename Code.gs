@@ -26,7 +26,7 @@ function processUnreadMessages(labelName, recipientEmail) {
                 // var subjectClean = subject.replace(/[^\w\s]/gi, '').replace(/ /g, '_');
                 var subjectClean = Utilities.newBlob(subject).getDataAsString();
 
-                // saveEmailBodyAsHTML(body, subjectClean, folderId);
+                saveEmailBodyAsHTML(body, subjectClean, folderId);
                 
                 var imageUrls = extractImagesFromMessageBody(body);
 
@@ -38,11 +38,11 @@ function processUnreadMessages(labelName, recipientEmail) {
                 var contentImages = imageProcessResult.contentImages
                 epub = createEPUB(messageId,author,subject,subjectClean,body,contentImages,imageBlobs)
 
-                saveEPUBToDrive(epub, folderId, subjectClean)
+                // saveEPUBToDrive(epub, folderId, subjectClean)
 
                 var subjectWithEmail = 'EPUB file: ' + subjectClean;
                 var bodyWithEmail = 'Please find the EPUB file attached.';
-                // sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
+                sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
 
                 
               }
