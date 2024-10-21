@@ -29,9 +29,11 @@ function processUnreadMessages(labelName, recipientEmail) {
                 // saveEmailBodyAsHTML(body, subjectClean, folderId);
                 
                 var imageUrls = extractImagesFromMessageBody(body);
-                var imageBlobs = downloadImages(imageUrls);
 
-                imageProcessResult=processImageUrls(body, imageUrls)
+                var downloadResult = downloadImages(imageUrls);
+                var imageBlobs = downloadResult.imageBlobs;
+
+                imageProcessResult=processImageUrls(body, imageUrls,downloadResult.failedUrls)
                 body=imageProcessResult.body
                 var contentImages = imageProcessResult.contentImages
                 epub = createEPUB(messageId,author,subject,subjectClean,body,contentImages,imageBlobs)
@@ -40,7 +42,7 @@ function processUnreadMessages(labelName, recipientEmail) {
 
                 var subjectWithEmail = 'EPUB file: ' + subjectClean;
                 var bodyWithEmail = 'Please find the EPUB file attached.';
-                sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
+                // sendEmailWithAttachment(recipientEmail, subjectWithEmail, bodyWithEmail, [epub])
 
                 
               }

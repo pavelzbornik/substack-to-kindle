@@ -1,5 +1,6 @@
 function downloadImages(imageUrls) {
   var imageBlobs = []; // List to store image blobs
+  var failedUrls = []; // List to store failed URLs
 
   // Download filtered images and store blobs in the list
   for (var i = 0; i < imageUrls.length; i++) {
@@ -25,11 +26,12 @@ function downloadImages(imageUrls) {
     } else {
       console.error("Image conversion failed for URL:", url);
       // Handle the failure here, like skipping the image or logging the error
+      failedUrls.push(url); // Add failed URL to the list
     }
   };
 
   // Now imageBlobs contains all downloaded image blobs
-  return imageBlobs;
+  return { imageBlobs: imageBlobs, failedUrls: failedUrls };
 }
 
 
@@ -72,23 +74,33 @@ function renameBlob(blob,newFileName) {
 }
 
 
-function processImageUrls(body, imageUrls) {
-    var contentImages =[]
+function processImageUrls(body, imageUrls,allFailedUrls) {
+    var contentImages = [];
+
     imageUrls.forEach(function (url, index) {
         var imageName = formatImageName(url, index);
         var formattedUrl = '../OEBPS/images/' + imageName;
-        
-        // Replace URL with image name in the HTML body
-        body = body.replace(url, formattedUrl);
-        
-        // Create image text for EPUB content
-        var imageText = '<item href="' + formattedUrl + '" id="' + imageName + '" media-type="image/' + imageName.split('.').pop() + '"/>';
-        
-        contentImages.push(imageText);
+
+        // Try to replace the image URL
+        if (allFailedUrls.includes(url)) {
+            // If conversion fails, remove the image tag from the HTML body
+            var imgTagRegex = new RegExp('<img[^>]*src=["\']' + url + '["\'][^>]*>', 'g');
+            body = body.replace(imgTagRegex, ''); // Remove the entire <img> tag
+            console.error("Image conversion failed for URL:", url);
+        } else {
+                      // Replace URL with image name in the HTML body
+            body = body.replace(url, formattedUrl);
+            
+            // Create image text for EPUB content
+            var imageText = '<item href="' + formattedUrl + '" id="' + imageName + '" media-type="image/' + imageName.split('.').pop() + '"/>';
+            contentImages.push(imageText);
+
+        }
     });
 
-    return { body: body, contentImages: contentImages }
+    return { body: body, contentImages: contentImages };
 }
+
 
 // function convertPNGtoJPEGAndExport(pngBlob) {
 //   // Create a new presentation
